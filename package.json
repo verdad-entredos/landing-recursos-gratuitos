@@ -1,0 +1,8 @@
+{
+  "name": "verdad-entre-dos-free-resource-mailbox",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
