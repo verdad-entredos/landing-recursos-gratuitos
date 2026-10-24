@@ -8,8 +8,8 @@
     <meta name="description" content="Cinco experiencias para salir de la rutina y volver a disfrutar de nosotros. Descarga gratis las ediciones digital e imprimible de 5 citas, 5 recuerdos.">
     <title>El buzón de los buenos momentos — Verdad entre dos</title>
     <link rel="preload" as="image" href="assets/cover.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css">
-    <script type="module" src="app.js"></script>
+    <link rel="stylesheet" href="styles.css?v=18">
+    <script type="module" src="app.js?v=15"></script>
   </head>
   <body>
     <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -35,13 +35,6 @@
               <p>Cinco experiencias para salir de la rutina y volver a disfrutar de nosotros.</p>
             </div>
           </div>
-          <div class="hero-actions">
-            <a class="button button--coral download-link" href="downloads/5_citas_5_recuerdos.pdf" download>
-              <span>Descargar edición digital</span><span class="button__icon" aria-hidden="true">↓</span>
-            </a>
-            <a class="quiet-link" href="#el-recurso">Conoce la colección <span aria-hidden="true">↘</span></a>
-          </div>
-          <p class="download-note"><span aria-hidden="true">↳</span> PDF directo · Sin registro · Guárdalo para cuando quieran</p>
         </div>
 
         <div class="hero-art" aria-label="La portada de 5 citas, 5 recuerdos asoma detrás de un sobre color crema con un sello coral">
@@ -53,6 +46,7 @@
               <img src="assets/cover.jpg" alt="Portada del recurso: un sobre color vino, fotografías y recuerdos sobre papel cálido" width="1024" height="1536" fetchpriority="high">
               <span class="cover-peek__caption">5 CITAS, 5 RECUERDOS</span>
             </div>
+            <span class="envelope-anchor" id="envelope-anchor" aria-hidden="true"></span>
             <div class="envelope" id="mail-envelope" aria-hidden="true">
               <span class="envelope__address">PARA QUIENES<br>SE ELIGEN HOY</span>
               <span class="envelope__postmark">BUENOS<br>MOMENTOS</span>
@@ -72,27 +66,25 @@
 
       <dialog class="resource-dialog" id="resource-dialog" aria-labelledby="preview-heading">
         <div class="resource-dialog__scroll">
-          <button class="preview-close" id="preview-close" type="button" aria-label="Cerrar la nota" autofocus><span aria-hidden="true">×</span></button>
-          <div class="modal-envelope-stage" aria-hidden="true">
-            <div class="modal-letter"><span>UNA NOTA PARA ABRIR</span><strong>5 citas, 5 recuerdos</strong></div>
-            <div class="modal-envelope">
-              <span class="modal-envelope__address">PARA QUIENES SE ELIGEN HOY</span>
-              <span class="modal-envelope__postmark">BUENOS<br>MOMENTOS</span>
-              <span class="modal-envelope__flap"></span>
-              <span class="modal-envelope__seal">V<span>·</span>E</span>
-            </div>
-          </div>
           <section class="letter-preview" id="resource-preview" aria-labelledby="preview-heading">
-            <div class="letter-preview__topline"><span>UNA PRIMERA PÁGINA</span><span>01 — 05</span></div>
+            <button class="preview-close" id="preview-close" type="button" aria-label="Cerrar la nota" autofocus><span aria-hidden="true">×</span></button>
+            <div class="letter-preview__topline"><span>LA COLECCIÓN</span><span>01 — 05</span></div>
             <div class="letter-preview__body">
               <div class="letter-preview__copy">
-                <p class="eyebrow eyebrow--dark">UNA CITA PARA COMPARTIR</p>
-                <h2 id="preview-heading">La mesa de las cosas pequeñas</h2>
-                <p>Una pausa para descubrir cuánto cariño cabe en lo cotidiano. Escriban una pista sobre un momento sencillo que todavía les dé ternura; luego intercambien los papeles y cuenten el recuerdo detrás de cada nota.</p>
-                <p class="preview-meta">50–70 MINUTOS <span aria-hidden="true">·</span> PRESUPUESTO BAJO <span aria-hidden="true">·</span> EN CASA O EN UN CAFÉ TRANQUILO</p>
-                <div class="preview-downloads">
-                  <a class="button button--ink" href="downloads/5_citas_5_recuerdos.pdf" download>Descargar PDF <span aria-hidden="true">↓</span></a>
-                  <a class="print-link" href="downloads/5_citas_5_recuerdos_imprimible.pdf" download>Descargar versión para imprimir <span aria-hidden="true">↓</span></a>
+                <p class="eyebrow eyebrow--dark">LO QUE CONTIENE</p>
+                <h2 id="preview-heading">Cinco citas para dos</h2>
+                <p>Un pasaporte para salir de la rutina y guardar un recuerdo de cada una. Cada cita trae el tiempo, el presupuesto y los pasos para vivirla.</p>
+                <div class="edition-list" aria-label="Ediciones disponibles">
+                  <a class="edition-row" href="downloads/5_citas_5_recuerdos.pdf" download>
+                    <span class="edition-row__index">A</span>
+                    <span class="edition-row__text"><strong>Edición digital</strong><span>Para leer desde el teléfono, con navegación por cita.</span></span>
+                    <span class="edition-row__action">Descargar <span aria-hidden="true">↓</span></span>
+                  </a>
+                  <a class="edition-row" href="downloads/5_citas_5_recuerdos_imprimible.pdf" download>
+                    <span class="edition-row__index">B</span>
+                    <span class="edition-row__text"><strong>Edición imprimible</strong><span>Tamaño carta, de bajo consumo de tinta y con páginas para escribir.</span></span>
+                    <span class="edition-row__action">Descargar <span aria-hidden="true">↓</span></span>
+                  </a>
                 </div>
               </div>
               <figure class="preview-page">
@@ -109,18 +101,6 @@
           <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span> UNA CITA A LA VEZ <span class="eyebrow__number">01—05</span></p>
           <h2 id="details-heading">Cinco maneras de<br><em>hacer espacio.</em></h2>
           <p>Un pasaporte de cinco citas para vivir en pareja y guardar un recuerdo distinto de cada una. Pueden leerlo desde el teléfono o imprimir sus páginas para completarlas a mano.</p>
-        </div>
-        <div class="edition-list" aria-label="Ediciones disponibles">
-          <a class="edition-row" href="downloads/5_citas_5_recuerdos.pdf" download>
-            <span class="edition-row__index">A</span>
-            <span class="edition-row__text"><strong>Edición digital</strong><span>Para leer desde el teléfono, con navegación por cita.</span></span>
-            <span class="edition-row__action">Descargar <span aria-hidden="true">↗</span></span>
-          </a>
-          <a class="edition-row" href="downloads/5_citas_5_recuerdos_imprimible.pdf" download>
-            <span class="edition-row__index">B</span>
-            <span class="edition-row__text"><strong>Edición imprimible</strong><span>Tamaño carta, de bajo consumo de tinta y con páginas para escribir.</span></span>
-            <span class="edition-row__action">Descargar <span aria-hidden="true">↗</span></span>
-          </a>
         </div>
       </section>
 
@@ -181,6 +161,8 @@
         </div>
       </section>
     </main>
+
+    <div class="envelope-dock" id="envelope-dock" data-open="false" hidden></div>
 
     <footer class="site-footer">
       <a class="wordmark wordmark--footer" href="#inicio">

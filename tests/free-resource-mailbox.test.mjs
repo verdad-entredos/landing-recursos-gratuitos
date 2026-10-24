@@ -18,19 +18,18 @@ test('the landing page introduces the published resource, keeps direct downloads
   assert.match(html, /5 citas, 5 recuerdos/);
   assert.match(html, /recursos gratuitos/i);
   assert.match(html, /Cinco experiencias para salir de la rutina y volver a disfrutar de nosotros\./);
-  assert.match(html, /La mesa de las cosas pequeñas/);
-  assert.match(html, /50–70 MINUTOS/);
+  assert.match(html, /Cinco citas para dos/);
+  assert.match(html, /Cada cita trae el tiempo, el presupuesto y los pasos para vivirla\./);
   assert.match(html, new RegExp(`href="downloads/${digitalPdf}"`));
   assert.match(html, new RegExp(`href="downloads/${printPdf}"`));
-  const primaryLinkIndex = html.indexOf(`href="downloads/${digitalPdf}"`);
-  const previewIndex = html.indexOf('id="resource-preview"');
-  assert.ok(primaryLinkIndex >= 0 && primaryLinkIndex < previewIndex, 'the main download must precede the modal preview');
+  const hero = html.slice(html.indexOf('<section class="hero"'), html.indexOf('</section>'));
+  assert.doesNotMatch(hero, /Descargar edición digital|download-link|href="downloads\//, 'the hero leaves the download inside the envelope');
   assert.match(html, /<dialog\b[^>]*id="resource-dialog"[^>]*aria-labelledby="preview-heading"/);
   assert.match(html, /id="resource-preview"[^>]*aria-labelledby="preview-heading"/);
   assert.match(html, /id="preview-close"[^>]*autofocus/);
-  const primaryAnchor = html.match(/<a\b[^>]*class="[^"]*download-link[^"]*"[^>]*>/);
-  assert.ok(primaryAnchor, "the page must show a primary download link");
-  assert.match(primaryAnchor[0], new RegExp(`href="downloads/${digitalPdf}"`));
+  const letter = html.match(/<section class="letter-preview"[\s\S]*?<\/section>/)?.[0] ?? '';
+  assert.match(letter, new RegExp(`href="downloads/${digitalPdf}"`), 'opening the envelope still offers the digital file');
+  assert.match(letter, new RegExp(`href="downloads/${printPdf}"`));
   assert.doesNotMatch(html, /<form\b|mailto:|testimonial|testimonio/i);
 });
 
@@ -226,8 +225,12 @@ test('the optional book reveal remains visible without IntersectionObserver and 
 test('modal download actions state that each link downloads a PDF', async () => {
   const html = await readSiteFile('dist/index.html');
   const preview = html.match(/<section class="letter-preview"[\s\S]*?<\/section>/)?.[0] ?? '';
-  assert.match(preview, /href="downloads\/5_citas_5_recuerdos\.pdf"[^>]*download>[\s\S]*?Descargar PDF/);
-  assert.match(preview, /href="downloads\/5_citas_5_recuerdos_imprimible\.pdf"[^>]*download>[\s\S]*?Descargar versión para imprimir/);
+  assert.match(preview, /href="downloads\/5_citas_5_recuerdos\.pdf"[^>]*download>[\s\S]*?Edición digital[\s\S]*?Descargar/);
+  assert.match(preview, /href="downloads\/5_citas_5_recuerdos_imprimible\.pdf"[^>]*download>[\s\S]*?Edición imprimible[\s\S]*?Descargar/);
+  const dialogStart = html.indexOf('<dialog');
+  const dialogEnd = html.indexOf('</dialog>') + '</dialog>'.length;
+  const outside = html.slice(0, dialogStart) + html.slice(dialogEnd);
+  assert.doesNotMatch(outside, /href="downloads\//, 'downloads stay inside the opened envelope');
 });
 
 test('keyboard users can reach the sales CTA without passing through a hidden reveal state', async () => {

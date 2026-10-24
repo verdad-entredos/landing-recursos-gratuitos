@@ -54,11 +54,18 @@ export function initializeEnvelope(documentRef = document) {
     rootStyle.scrollBehavior = snapshot.root.scrollBehavior;
   }
 
+  const envelope = documentRef.getElementById('mail-envelope');
+  const dock = documentRef.getElementById('envelope-dock');
+  const anchor = documentRef.getElementById('envelope-anchor');
+  let requestDockSync = () => {};
+
   function setOpen(isOpen) {
     opener.setAttribute('aria-expanded', String(isOpen));
     actionLabel.textContent = isOpen ? 'Cerrar el sobre' : 'Abrir el sobre';
-    mailbox.setAttribute('data-open', String(isOpen));
-    dialog.setAttribute('data-opening', String(isOpen));
+    const value = String(isOpen);
+    mailbox.setAttribute('data-open', value);
+    dock?.setAttribute('data-open', value);
+    dialog.setAttribute('data-opening', value);
 
     if (!isOpen) opener.focus({ preventScroll: true });
   }
@@ -67,6 +74,7 @@ export function initializeEnvelope(documentRef = document) {
     if (dialog.open) return;
     restorePageScroll();
     if (dialog.getAttribute('data-opening') === 'true') setOpen(false);
+    requestDockSync();
   }
 
   function closeDialog() {
@@ -75,9 +83,19 @@ export function initializeEnvelope(documentRef = document) {
     finishClosing();
   }
 
+  function placeLetterOrigin() {
+    const envelope = documentRef.getElementById('mail-envelope');
+    const setProperty = dialog.style?.setProperty;
+    if (!envelope?.getBoundingClientRect || typeof setProperty !== 'function') return;
+    const rect = envelope.getBoundingClientRect();
+    setProperty.call(dialog.style, '--letter-x', `${rect.left + rect.width / 2}px`);
+    setProperty.call(dialog.style, '--letter-y', `${rect.top + rect.height * 0.3}px`);
+  }
+
   opener.addEventListener('click', () => {
     if (dialog.open) return;
     lockPageScroll();
+    placeLetterOrigin();
     try {
       dialog.showModal();
       setOpen(true);
@@ -112,14 +130,71 @@ export function initializeEnvelope(documentRef = document) {
     }
   });
   dialog.addEventListener('click', (event) => {
-    if (event.target === dialog) closeDialog();
+    const target = event.target;
+    if (target === dialog || target?.classList?.contains('resource-dialog__scroll')) closeDialog();
   });
   dialog.addEventListener('close', finishClosing);
 
   actionLabel.textContent = 'Abrir el sobre';
   mailbox.setAttribute('data-open', 'false');
+  dock?.setAttribute('data-open', 'false');
   dialog.setAttribute('data-opening', 'false');
   opener.hidden = false;
+
+  if (envelope && dock && anchor && typeof page?.addEventListener === 'function' && typeof anchor.getBoundingClientRect === 'function') {
+    const stamp = mailbox.querySelector('.art-stamp');
+    const caption = mailbox.querySelector('.art-caption');
+    let dockFrame = 0;
+
+    function applyDockSize(rect) {
+      const rootStyle = documentRef.documentElement.style;
+      if (rect.width < 1 || rect.height < 1) return;
+      rootStyle.setProperty('--dock-envelope-width', `${rect.width}px`);
+      rootStyle.setProperty('--dock-envelope-height', `${rect.height}px`);
+    }
+
+    function placeEnvelope(atHome) {
+      if (atHome) {
+        if (stamp) stamp.before(envelope);
+        else mailbox.append(envelope);
+        if (caption) caption.before(opener);
+        else mailbox.append(opener);
+        dock.hidden = true;
+        documentRef.documentElement.style.removeProperty('--dock-envelope-width');
+        documentRef.documentElement.style.removeProperty('--dock-envelope-height');
+        return;
+      }
+
+      applyDockSize(anchor.getBoundingClientRect());
+      dock.append(envelope, opener);
+      dock.hidden = false;
+    }
+
+    function syncDock() {
+      dockFrame = 0;
+      if (dialog.open) return;
+      const rect = anchor.getBoundingClientRect();
+      const docked = envelope.parentElement === dock;
+      if (!docked && rect.bottom < -24) placeEnvelope(false);
+      else if (docked && rect.bottom > 48) placeEnvelope(true);
+      else if (docked) applyDockSize(rect);
+    }
+
+    requestDockSync = () => {
+      if (typeof page.requestAnimationFrame !== 'function') {
+        syncDock();
+        return;
+      }
+      if (dockFrame) return;
+      dockFrame = page.requestAnimationFrame(syncDock);
+    };
+
+    documentRef.addEventListener('scroll', requestDockSync, { passive: true, capture: true });
+    page.addEventListener('scroll', requestDockSync, { passive: true });
+    page.addEventListener('resize', requestDockSync);
+    syncDock();
+  }
+
   return true;
 }
 
